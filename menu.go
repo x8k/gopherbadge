@@ -13,7 +13,7 @@ import (
 func menu() int16 {
 	display.FillScreen(color.RGBA{0, 0, 0, 255})
 	options := []string{
-		"Badge",
+		"Fosdem",
 		"GopherCon Schedule",
 		"GopherCon Adventure",
 		"Snake",

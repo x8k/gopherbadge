@@ -98,7 +98,7 @@ func main() {
 	for {
 		switch menu() {
 		case 0:
-			Badge()
+			Fosdem()
 			break
 		case 1:
 			schedule(0, 0)
