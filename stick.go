@@ -115,7 +115,7 @@ func (s *Stickperson) Draw() {
 	// Draw arms
 	if s.Waving {
 		// Left arm waving (raised)
-		tinydraw.Line(display, int16(centerX-armLength), int16(armY), int16(centerX-armLength), int16(armY-headRadius*2), colors[BLACK])
+		tinydraw.Line(display, int16(centerX-armLength), int16(armY-headRadius*2), int16(centerX), int16(armY), colors[BLACK])
 	} else {
 		// Left arm normal
 		tinydraw.Line(display, int16(centerX-armLength), int16(armY), int16(centerX), int16(armY), colors[BLACK])
