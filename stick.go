@@ -67,6 +67,7 @@ type Stickperson struct {
 	PositionX int
 	Direction MovementDirection
 	Display   *st7789.Device // Dependency injection for display
+	Waving    bool
 }
 
 func NewStickperson(centerX int, display *st7789.Device) *Stickperson {
@@ -80,11 +81,11 @@ func NewStickperson(centerX int, display *st7789.Device) *Stickperson {
 func (s *Stickperson) Move(dir MovementDirection, step int) {
 	s.Direction = dir
 	switch dir {
-		case Left:
-			s.PositionX -= step
-		case Right:
-			s.PositionX += step
-		case Stopped:
+	case Left:
+		s.PositionX -= step
+	case Right:
+		s.PositionX += step
+	case Stopped:
 		// No movement
 	}
 	// Clamp position so arms never fully leave screen
@@ -110,8 +111,17 @@ func (s *Stickperson) Draw() {
 	tinydraw.Circle(display, int16(centerX), int16(headCenterY), int16(headRadius), colors[BLACK])
 	// Draw body
 	tinydraw.Line(display, int16(centerX), int16(bodyStartY), int16(centerX), int16(bodyEndY), colors[BLACK])
+
 	// Draw arms
-	tinydraw.Line(display, int16(centerX-armLength), int16(armY), int16(centerX+armLength), int16(armY), colors[BLACK])
+	if s.Waving {
+		// Left arm waving (raised)
+		tinydraw.Line(display, int16(centerX-armLength), int16(armY), int16(centerX-armLength), int16(armY-headRadius*2), colors[BLACK])
+	} else {
+		// Left arm normal
+		tinydraw.Line(display, int16(centerX-armLength), int16(armY), int16(centerX), int16(armY), colors[BLACK])
+	}
+	// Right arm always normal
+	tinydraw.Line(display, int16(centerX), int16(armY), int16(centerX+armLength), int16(armY), colors[BLACK])
 
 	// Gambe animate
 	var leftLegX, leftLegY, rightLegX, rightLegY int
@@ -148,7 +158,6 @@ const (
 func stick(day int, hour int) {
 	// Use Stickperson abstraction
 	sp := NewStickperson(WIDTH/2, &display)
-	// Compose strategies: button first, then accelerometer
 	movement := &CompositeMovementStrategy{
 		strategies: []MovementStrategy{
 			&ButtonMovementStrategy{},
@@ -159,8 +168,9 @@ func stick(day int, hour int) {
 	sp.Draw()
 	display.Display()
 
+	wavingState := false
 	for {
-		if !btnA.Get() || !btnB.Get() || !btnUp.Get() || !btnDown.Get() {
+		if !btnA.Get() || !btnUp.Get() || !btnDown.Get() {
 			break
 		}
 		dir := movement.GetDirection()
@@ -169,10 +179,17 @@ func stick(day int, hour int) {
 		} else {
 			sp.Direction = Stopped
 		}
+		// Waving logic
+		if !btnB.Get() {
+			wavingState = !wavingState // alternate up/down each frame while pressed
+			sp.Waving = true
+		} else {
+			sp.Waving = false
+		}
 		display.FillScreen(colors[GREEN])
 		sp.Draw()
 		display.Display()
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(150 * time.Millisecond)
 	}
 }
 
