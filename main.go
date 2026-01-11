@@ -25,6 +25,8 @@ const (
 	TEXT
 	ORANGE
 	PURPLE
+	DARKBLUE
+	GREEN
 )
 
 var colors = []color.RGBA{
@@ -35,6 +37,8 @@ var colors = []color.RGBA{
 	color.RGBA{160, 160, 160, 255},
 	color.RGBA{255, 153, 51, 255},
 	color.RGBA{153, 51, 255, 255},
+	color.RGBA{0, 0, 139, 255},
+	color.RGBA{60, 179, 113, 255},
 }
 
 var snakeGame = NewSnakeGame()
@@ -101,7 +105,7 @@ func main() {
 			Fosdem()
 			break
 		case 1:
-			schedule(0, 0)
+			stick(0, 0)
 			break
 		case 2:
 			adventure()

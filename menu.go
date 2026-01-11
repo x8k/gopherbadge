@@ -14,7 +14,7 @@ func menu() int16 {
 	display.FillScreen(color.RGBA{0, 0, 0, 255})
 	options := []string{
 		"Fosdem",
-		"GopherCon Schedule",
+		"Stick",
 		"GopherCon Adventure",
 		"Snake",
 		"Rainbow LEDs",
